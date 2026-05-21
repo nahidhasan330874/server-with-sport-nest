@@ -65,6 +65,20 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/facilities", async (req, res) => {
+      const limit = parseInt(req.query.limit);
+
+      let query = facilityCollection.find();
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const result = await query.toArray();
+
+      res.send(result);
+    });
+
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
 
