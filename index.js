@@ -2,11 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
-const {
-  MongoClient,
-  ServerApiVersion,
-  ObjectId,
-} = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 dotenv.config();
 
@@ -32,17 +28,14 @@ async function run() {
 
     const db = client.db("sportNest");
 
-    // collections
     const facilityCollection = db.collection("facility");
     const bookingsCollection = db.collection("bookings");
 
-    // GET all facilities
     app.get("/add-facility", async (req, res) => {
       const result = await facilityCollection.find().toArray();
       res.send(result);
     });
 
-    // ADD facility
     app.post("/add-facility", async (req, res) => {
       const facilityData = req.body;
 
@@ -51,7 +44,6 @@ async function run() {
       res.send(result);
     });
 
-    
     app.get("/facilities/:id", async (req, res) => {
       const id = req.params.id;
 
@@ -61,7 +53,7 @@ async function run() {
 
       res.send(result);
     });
- 
+
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
 
@@ -69,6 +61,32 @@ async function run() {
 
       res.send(result);
     });
+
+    app.get("/bookings", async (req, res) => {
+      try {
+        const result = await bookingsCollection.find().toArray();
+
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({
+          message: "Failed to fetch bookings",
+        });
+      }
+    });
+
+    app.delete(
+      "/bookings/:id",
+
+      async (req, res) => {
+        const id = req.params.id;
+
+        const result = await bookingsCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+
+        res.send(result);
+      },
+    );
 
     await client.db("admin").command({ ping: 1 });
 
