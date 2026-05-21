@@ -65,6 +65,20 @@ async function run() {
       res.send(result);
     });
 
+app.put("/add-facility/:id", async (req, res) => {
+  const id = req.params.id;
+
+  const updatedData = { ...req.body };
+  delete updatedData._id; // 🔥 IMPORTANT FIX
+
+  const result = await facilityCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: updatedData }
+  );
+
+  res.send(result);
+});
+
     app.get("/facilities", async (req, res) => {
       const limit = parseInt(req.query.limit);
 
